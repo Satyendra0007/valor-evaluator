@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import ScoreInputs from "./ScoreInputs"
 import { calculateScore, getRating } from "../utils/scoring"
 
-export default function ResponseCard({ title, onScore, resetSignal }) {
+export default function ResponseCard({ title, onScore, resetSignal, autoFocus }) {
 
   const [score, setScore] = useState(null)
   const [rating, setRating] = useState(null)
@@ -19,17 +19,16 @@ export default function ResponseCard({ title, onScore, resetSignal }) {
     const verbosity = values[3]
     const correctness = values[4]
 
-    const formulaText =
-      `${IF}×0.25 + ${truth}×0.25 + ${correctness}×0.20 + ${writing}×0.15 + ${verbosity}×0.15 = ${result}`
+    const formulaText = `${IF}×0.25 + ${truth}×0.25 + ${correctness}×0.20 + ${writing}×0.15 + ${verbosity}×0.15 = ${result}`
 
     setScore(result)
     setRating(r)
     setFormula(formulaText)
 
     onScore(result)
+
   }
 
-  // RESET RESULT WHEN NEXT TURN CLICKED
   useEffect(() => {
     setScore(null)
     setRating(null)
@@ -37,59 +36,52 @@ export default function ResponseCard({ title, onScore, resetSignal }) {
   }, [resetSignal])
 
   return (
-    <div className="
-    rounded-xl
-    bg-white
-    p-5
-    shadow-md
-    border border-gray-100
-    ">
+
+    <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl shadow-lg p-6">
 
       <h2 className="text-lg font-semibold text-center mb-5">
         {title}
       </h2>
 
-      <ScoreInputs onComplete={handleComplete} resetSignal={resetSignal} />
+      <ScoreInputs
+        onComplete={handleComplete}
+        resetSignal={resetSignal}
+        autoFocus={autoFocus}
+      />
 
       {score && (
 
-        <div className="mt-5">
+        <div className="mt-4 space-y-3">
 
           <p className="text-xs text-gray-500 text-center">
             Calculation
           </p>
 
-          <p className="text-xs text-center font-medium text-gray-700 mt-1 break-words">
+          <p className="text-xs text-center text-gray-700 font-medium">
             {formula}
           </p>
 
-          <div className="
-          mt-4
-          grid
-          grid-cols-2
-          gap-4
-          text-center
-          ">
+          <div className="grid grid-cols-2 gap-3">
 
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-indigo-50 rounded-lg p-3 text-center">
 
-              <p className="text-xs text-gray-500">
+              <p className="text-[11px] text-gray-500">
                 Score
               </p>
 
-              <p className="text-lg font-bold text-indigo-600">
+              <p className="text-lg font-bold text-indigo-700">
                 {score}
               </p>
 
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-purple-50 rounded-lg p-3 text-center">
 
-              <p className="text-xs text-gray-500">
-                Overall Rating
+              <p className="text-[11px] text-gray-500">
+                Rating
               </p>
 
-              <p className="text-lg font-semibold">
+              <p className="text-sm font-semibold text-purple-700">
                 {rating.number} ({rating.label})
               </p>
 
@@ -102,5 +94,7 @@ export default function ResponseCard({ title, onScore, resetSignal }) {
       )}
 
     </div>
+
   )
+
 }

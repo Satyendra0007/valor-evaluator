@@ -1,78 +1,143 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 
 const labels = ["Truth", "IF", "Writing", "Verbosity", "Correctness"]
 
-export default function ScoreInputs({ onComplete, resetSignal }) {
+export default function ScoreInputs({ onComplete, resetSignal, autoFocus }) {
 
   const inputs = useRef([])
-  const values = useRef(Array(5).fill(""))
+  const [values, setValues] = useState(["", "", "", "", ""])
+  const [errors, setErrors] = useState([false, false, false, false, false])
 
   const handleChange = (e, index) => {
-    const val = e.target.value
 
-    if (!/^[1-6]?$/.test(val)) return
+    let val = e.target.value
 
-    values.current[index] = val
-    e.target.value = val
+    // allow empty (for backspace)
+    if (val === "") {
 
-    if (val && index < 4) {
-      inputs.current[index + 1].focus()
+      const newValues = [...values]
+      newValues[index] = ""
+      setValues(newValues)
+
+      const newErrors = [...errors]
+      newErrors[index] = false
+      setErrors(newErrors)
+
+      return
     }
 
-    if (values.current.every(v => v !== "")) {
-      onComplete([...values.current])
+    // invalid
+    if (!/^[1-6]$/.test(val)) {
+
+      const newErrors = [...errors]
+      newErrors[index] = true
+      setErrors(newErrors)
+
+      return
     }
+
+    // valid
+    const newValues = [...values]
+    newValues[index] = val
+    setValues(newValues)
+
+    const newErrors = [...errors]
+    newErrors[index] = false
+    setErrors(newErrors)
+
+    // move focus
+    if (index < 4) {
+      inputs.current[index + 1]?.focus()
+    }
+
+    // calculate if all valid
+    const filled = newValues.every(v => v !== "")
+    const hasError = newErrors.some(e => e)
+
+    if (filled && !hasError) {
+      onComplete(newValues)
+    }
+
   }
 
   const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !e.target.value && index > 0) {
-      inputs.current[index - 1].focus()
+
+    if (e.key === "Backspace") {
+
+      // Only move to previous if current input is already empty
+      if (e.target.value === "" && index > 0) {
+        inputs.current[index - 1]?.focus()
+      }
+
     }
+
   }
 
+  // reset inputs
   useEffect(() => {
-    values.current = Array(5).fill("")
 
-    inputs.current.forEach((input) => {
+    setValues(["", "", "", "", ""])
+    setErrors([false, false, false, false, false])
+
+    inputs.current.forEach(input => {
       if (input) input.value = ""
     })
 
-    inputs.current[0]?.focus()
-  }, [resetSignal])
+    if (autoFocus) {
+      inputs.current[0]?.focus()
+    }
+
+  }, [resetSignal, autoFocus])
 
   return (
-    <div className="flex justify-center gap-3 sm:gap-4">
 
-      {labels.map((label, index) => (
-        <div key={index} className="flex flex-col items-center">
+    <div className="flex justify-center gap-3">
 
-          <input
-            type="text"
-            maxLength="1"
-            ref={(el) => (inputs.current[index] = el)}
-            onChange={(e) => handleChange(e, index)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-            className="
-            w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16
-            text-lg sm:text-xl
-            text-center
-            font-semibold
-            rounded-xl
-            border border-gray-300
-            bg-white
-            shadow-sm
-            focus:ring-2 focus:ring-indigo-500
-            transition
-            "
-          />
+      {labels.map((label, index) => {
 
-          <span className="text-[10px] sm:text-xs font-semibold mt-1 text-gray-600">
-            {label}
-          </span>
+        const border = errors[index]
+          ? "border-red-500"
+          : values[index]
+            ? "border-green-500"
+            : "border-gray-300"
 
-        </div>
-      ))}
+        return (
+
+          <div key={index} className="flex flex-col items-center">
+
+            <input
+              type="text"
+              maxLength="1"
+              onFocus={(e) => e.target.select()}
+              ref={(el) => (inputs.current[index] = el)}
+              onChange={(e) => handleChange(e, index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              className={`
+w-12 h-12
+text-center
+text-lg
+font-semibold
+rounded-lg
+border-2
+${border}
+bg-white
+focus:ring-2 focus:ring-indigo-500
+transition
+`}
+            />
+
+            <span className="text-[10px] font-semibold mt-1 text-gray-600">
+              {label}
+            </span>
+
+          </div>
+
+        )
+
+      })}
 
     </div>
+
   )
+
 }

@@ -56,6 +56,7 @@ export default function App() {
             title="Response A"
             onScore={setScoreA}
             resetSignal={resetSignal}
+            autoFocus={true}
           />
 
           <ResponseCard
@@ -67,45 +68,37 @@ export default function App() {
         </div>
 
         {scoreA && scoreB && (
+          <div className="mt-8 max-w-sm mx-auto bg-white shadow-md rounded-xl p-5 text-center border">
 
-          <div className="
-          mt-10
-          bg-white
-          rounded-2xl
-          shadow-lg
-          p-8
-          text-center
-          ">
-
-            <p className="text-sm text-gray-500">
+            <p className="text-xs text-gray-500">
               Winner
             </p>
 
-            <p className="text-2xl font-bold text-green-600">
+            <p className="text-xl font-bold text-indigo-700">
               {getWinner()}
             </p>
 
-            <p className="text-sm text-gray-500 mt-4">
-              Score Difference
+            <p className="text-xs text-gray-500 mt-3">
+              Difference
             </p>
 
-            <p className="text-xl font-semibold">
+            <p className="text-lg font-semibold text-purple-700">
               {Math.abs(scoreA - scoreB).toFixed(2)}
             </p>
 
             <button
               onClick={handleReset}
               className="
-              mt-6
-              px-6
-              py-3
-              rounded-lg
-              bg-indigo-600
-              text-white
-              font-medium
-              hover:bg-indigo-700
-              transition
-              "
+mt-4
+px-5 py-2
+rounded-lg
+bg-indigo-600
+text-white
+text-sm
+font-medium
+hover:bg-indigo-700
+transition
+"
             >
               Next Turn
             </button>
@@ -113,7 +106,6 @@ export default function App() {
           </div>
 
         )}
-
       </div>
 
     </div>
