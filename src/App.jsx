@@ -3,6 +3,8 @@ import ResponseCard from "./components/ResponseCard"
 import { BarChart3 } from "lucide-react"
 import { History, LayoutDashboard } from "lucide-react"
 import { Trophy } from "lucide-react"
+import { Trash2 } from "lucide-react"
+import { Clock } from "lucide-react"
 
 export default function App() {
 
@@ -130,7 +132,7 @@ ${view === "history"
       {view === "evaluate" && (
 
         <>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 justify-center gap-6 max-w-4xl mx-auto">
 
             <ResponseCard
               title="Response A"
@@ -214,8 +216,9 @@ ${view === "history"
             <>
               <div className="flex justify-between mb-4">
 
-                <h2 className="font-semibold">
-                  History
+                <h2 className="font-semibold flex items-center gap-2">
+                  <Clock size={16} className="text-indigo-600" />
+                  Evaluation History
                 </h2>
 
                 <button
@@ -337,9 +340,9 @@ ${view === "history"
 
                       <button
                         onClick={() => deleteItem(item.id)}
-                        className="text-red-500 text-[10px] hover:underline"
+                        className="text-red-500 hover:text-red-600"
                       >
-                        Delete
+                        <Trash2 size={14} />
                       </button>
 
                     </div>
