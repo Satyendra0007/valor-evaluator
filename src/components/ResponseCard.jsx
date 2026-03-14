@@ -25,7 +25,16 @@ export default function ResponseCard({ title, onScore, resetSignal, autoFocus })
     setRating(r)
     setFormula(formulaText)
 
-    onScore(result)
+    onScore({
+      score: result,
+      dimensions: {
+        truth,
+        if: IF,
+        writing,
+        verbosity,
+        correctness
+      }
+    })
 
   }
 
@@ -37,7 +46,7 @@ export default function ResponseCard({ title, onScore, resetSignal, autoFocus })
 
   return (
 
-    <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl shadow-lg p-6">
+    <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition p-6">
 
       <h2 className="text-lg font-semibold text-center mb-5">
         {title}

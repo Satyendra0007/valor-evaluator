@@ -1,120 +1,367 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ResponseCard from "./components/ResponseCard"
+import { BarChart3 } from "lucide-react"
+import { History, LayoutDashboard } from "lucide-react"
+import { Trophy } from "lucide-react"
 
 export default function App() {
 
-  const [scoreA, setScoreA] = useState(null)
-  const [scoreB, setScoreB] = useState(null)
+  const [responseA, setResponseA] = useState(null)
+  const [responseB, setResponseB] = useState(null)
+
   const [resetSignal, setResetSignal] = useState(0)
+  const [history, setHistory] = useState([])
+
+  // NEW: view switch
+  const [view, setView] = useState("evaluate")
+
+  // load history
+  useEffect(() => {
+    const saved = localStorage.getItem("valor-history")
+    if (saved) setHistory(JSON.parse(saved))
+  }, [])
 
   const getWinner = () => {
-    if (scoreA > scoreB) return "Response A"
-    if (scoreB > scoreA) return "Response B"
+
+    if (responseA.score > responseB.score) return "Response A"
+    if (responseB.score > responseA.score) return "Response B"
+
     return "Tie"
   }
 
   const handleReset = () => {
-    setScoreA(null)
-    setScoreB(null)
+
+    if (responseA && responseB) {
+
+      const newEntry = {
+        id: Date.now(),
+
+        responseA,
+        responseB,
+
+        winner: getWinner(),
+
+        difference: Math.abs(
+          responseA.score - responseB.score
+        ).toFixed(2),
+
+        time: new Date().toLocaleTimeString()
+      }
+
+      const updated = [newEntry, ...history]
+
+      setHistory(updated)
+
+      localStorage.setItem(
+        "valor-history",
+        JSON.stringify(updated)
+      )
+    }
+
+    setResponseA(null)
+    setResponseB(null)
+
     setResetSignal(prev => prev + 1)
+  }
+
+  const deleteItem = (id) => {
+
+    const filtered = history.filter(h => h.id !== id)
+
+    setHistory(filtered)
+
+    localStorage.setItem(
+      "valor-history",
+      JSON.stringify(filtered)
+    )
+  }
+
+  const deleteAll = () => {
+
+    setHistory([])
+
+    localStorage.removeItem("valor-history")
   }
 
   return (
 
-    <div className="
-    min-h-screen
-    bg-gradient-to-br
-    from-indigo-100
-    via-white
-    to-purple-100
-    px-4
-    py-10
-    ">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-100 max-w-6xl mx-auto">
+      <h1 className="text-4xl font-bold text-center mb-2 flex items-center justify-center gap-2 text-gray-800">
+        <BarChart3 size={28} className="text-indigo-600" />
+        Valor Evaluator
+      </h1>
 
-      <div className="max-w-6xl mx-auto">
+      <p className="text-center text-sm text-gray-500 mb-8">
+        Response Evaluation Dashboard
+      </p>
 
-        <div className="text-center mb-10">
+      {/* Tabs */}
 
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
-            Valor Evaluator
-          </h1>
+      <div className="flex justify-center gap-3 mb-10">
 
-          <p className="text-gray-500 mt-2 text-sm">
-            Multi-Turn Model Response Rating
-          </p>
+        <button
+          onClick={() => setView("evaluate")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition
+${view === "evaluate"
+              ? "bg-indigo-600 text-white shadow-md"
+              : "bg-white border hover:bg-gray-50"}
+`}
+        >
+          <LayoutDashboard size={16} />
+          Evaluation
+        </button>
 
-        </div>
+        <button
+          onClick={() => setView("history")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition
+${view === "history"
+              ? "bg-indigo-600 text-white shadow-md"
+              : "bg-white border hover:bg-gray-50"}
+`}
+        >
+          <History size={16} />
+          History
+        </button>
 
-        <div className="
-        grid
-        grid-cols-1
-        lg:grid-cols-2
-        gap-6
-        ">
+      </div>
 
-          <ResponseCard
-            title="Response A"
-            onScore={setScoreA}
-            resetSignal={resetSignal}
-            autoFocus={true}
-          />
+      {/* ---------------- EVALUATION VIEW ---------------- */}
 
-          <ResponseCard
-            title="Response B"
-            onScore={setScoreB}
-            resetSignal={resetSignal}
-          />
+      {view === "evaluate" && (
 
-        </div>
+        <>
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
 
-        {scoreA && scoreB && (
-          <div className="mt-8 max-w-sm mx-auto bg-white shadow-md rounded-xl p-5 border">
+            <ResponseCard
+              title="Response A"
+              onScore={setResponseA}
+              resetSignal={resetSignal}
+              autoFocus
+            />
 
-            <div className="grid grid-cols-2 gap-4 text-center">
+            <ResponseCard
+              title="Response B"
+              onScore={setResponseB}
+              resetSignal={resetSignal}
+            />
 
-              <div>
-                <p className="text-xs text-gray-500">
-                  Winner
-                </p>
+          </div>
 
-                <p className="text-xl font-bold text-indigo-700">
-                  {getWinner()}
-                </p>
+          {responseA && responseB && (
+
+
+
+            <div className="mt-8 max-w-sm mx-auto bg-white border rounded-xl p-6 shadow-md">
+
+              <div className="flex justify-center mb-4">
+
+                <div className="bg-indigo-100 p-2 rounded-full">
+                  <Trophy size={18} className="text-indigo-600" />
+                </div>
+
               </div>
 
-              <div>
-                <p className="text-xs text-gray-500">
-                  Difference
-                </p>
+              <div className="grid grid-cols-2 text-center">
 
-                <p className="text-lg font-semibold text-purple-700">
-                  {Math.abs(scoreA - scoreB).toFixed(2)}
-                </p>
+                <div>
+
+                  <p className="text-xs text-gray-500">
+                    Winner
+                  </p>
+
+                  <p className="font-bold text-indigo-700 text-lg">
+                    {getWinner()}
+                  </p>
+
+                </div>
+
+                <div>
+
+                  <p className="text-xs text-gray-500">
+                    Difference
+                  </p>
+
+                  <p className="font-semibold text-purple-700 text-lg">
+                    {Math.abs(responseA.score - responseB.score).toFixed(2)}
+                  </p>
+
+                </div>
+
               </div>
+
+              <button
+                onClick={handleReset}
+                className="mt-5 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm"
+              >
+                Next Turn
+              </button>
 
             </div>
 
-            <button
-              onClick={handleReset}
-              className="
-      mt-5
-      w-full
-      px-5 py-2
-      rounded-lg
-      bg-indigo-600
-      text-white
-      text-sm
-      font-medium
-      hover:bg-indigo-700
-      transition
-      "
-            >
-              Next Turn
-            </button>
+          )}
 
-          </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {/* ---------------- HISTORY VIEW ---------------- */}
+
+      {view === "history" && (
+
+        <div className="max-w-4xl mx-auto">
+
+          {history.length > 0 ? (
+
+            <>
+              <div className="flex justify-between mb-4">
+
+                <h2 className="font-semibold">
+                  History
+                </h2>
+
+                <button
+                  onClick={deleteAll}
+                  className="text-red-500 text-sm"
+                >
+                  Delete All
+                </button>
+
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-3">
+
+                {history.map(item => (
+
+                  <div
+                    key={item.id}
+                    className="bg-white border rounded-xl p-3 shadow-sm text-xs hover:shadow-md transition"
+                  >
+
+                    {/* Winner + Difference */}
+                    <div className="flex justify-between items-center mb-2">
+
+                      <span className="px-2 py-[2px] rounded-md bg-indigo-100 text-indigo-700 font-semibold">
+                        {item.winner}
+                      </span>
+
+                      <span className="text-gray-500 font-medium">
+                        Δ {item.difference}
+                      </span>
+
+                    </div>
+
+                    {/* Response Scores */}
+                    <div className="grid grid-cols-2 gap-2">
+
+                      {/* Response A */}
+                      <div className="bg-indigo-50 rounded-lg p-2">
+
+                        <p className="text-[10px] text-gray-500 mb-1">
+                          Response A
+                        </p>
+
+                        <p className="font-bold text-indigo-700 mb-1">
+                          Score {item.responseA.score}
+                        </p>
+
+                        <div className="flex flex-wrap gap-1">
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            T {item.responseA.dimensions.truth}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            IF {item.responseA.dimensions.if}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            W {item.responseA.dimensions.writing}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            V {item.responseA.dimensions.verbosity}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            C {item.responseA.dimensions.correctness}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                      {/* Response B */}
+                      <div className="bg-purple-50 rounded-lg p-2">
+
+                        <p className="text-[10px] text-gray-500 mb-1">
+                          Response B
+                        </p>
+
+                        <p className="font-bold text-purple-700 mb-1">
+                          Score {item.responseB.score}
+                        </p>
+
+                        <div className="flex flex-wrap gap-1">
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            T {item.responseB.dimensions.truth}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            IF {item.responseB.dimensions.if}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            W {item.responseB.dimensions.writing}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            V {item.responseB.dimensions.verbosity}
+                          </span>
+
+                          <span className="px-1.5 py-[2px] bg-white border rounded">
+                            C {item.responseB.dimensions.correctness}
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex justify-between items-center mt-2">
+
+                      <span className="text-gray-400 text-[10px]">
+                        {item.time}
+                      </span>
+
+                      <button
+                        onClick={() => deleteItem(item.id)}
+                        className="text-red-500 text-[10px] hover:underline"
+                      >
+                        Delete
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                ))}
+
+              </div>
+            </>
+
+          ) : (
+
+            <p className="text-center text-gray-400">
+              No history yet
+            </p>
+
+          )}
+
+        </div>
+
+      )}
 
     </div>
   )

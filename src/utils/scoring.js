@@ -1,4 +1,5 @@
 export const calculateScore = (values) => {
+
   const truth = Number(values[0])
   const IF = Number(values[1])
   const writing = Number(values[2])
@@ -16,10 +17,12 @@ export const calculateScore = (values) => {
 }
 
 export const getRating = (score) => {
+
   if (score >= 5.5) return { number: 6, label: "Excellent" }
   if (score >= 4.5) return { number: 5, label: "Good" }
   if (score >= 3.5) return { number: 4, label: "Fair" }
   if (score >= 2.5) return { number: 3, label: "Mediocre" }
   if (score >= 1.5) return { number: 2, label: "Poor" }
+
   return { number: 1, label: "Very Poor" }
 }
