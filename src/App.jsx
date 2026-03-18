@@ -19,7 +19,7 @@ export default function App() {
 
   // load history
   useEffect(() => {
-    const saved = localStorage.getItem("vindex-history")
+    const saved = localStorage.getItem("valor-history")
     if (saved) setHistory(JSON.parse(saved))
   }, [])
 
@@ -55,7 +55,7 @@ export default function App() {
       setHistory(updated)
 
       localStorage.setItem(
-        "vindex-history",
+        "valor-history",
         JSON.stringify(updated)
       )
     }
@@ -73,7 +73,7 @@ export default function App() {
     setHistory(filtered)
 
     localStorage.setItem(
-      "vindex-history",
+      "valor-history",
       JSON.stringify(filtered)
     )
   }
@@ -82,7 +82,7 @@ export default function App() {
 
     setHistory([])
 
-    localStorage.removeItem("vindex-history")
+    localStorage.removeItem("valor-history")
   }
 
   return (
@@ -90,7 +90,7 @@ export default function App() {
     <div className="min-h-screen p-6 bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-100 max-w-6xl mx-auto">
       <h1 className="text-4xl font-bold text-center mb-2 flex items-center justify-center gap-2 text-gray-800">
         <BarChart3 size={28} className="text-indigo-600" />
-        Vindex Evaluator
+        Valor Evaluator
       </h1>
 
       <p className="text-center text-sm text-gray-500 mb-8">
