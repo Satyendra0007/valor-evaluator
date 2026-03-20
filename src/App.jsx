@@ -7,6 +7,13 @@ export default function App() {
   const [responseA, setResponseA] = useState(null)
   const [responseB, setResponseB] = useState(null)
 
+  const [focusBTrigger, setFocusBTrigger] = useState(0)
+
+  const handleScoreA = (data) => {
+    setResponseA(data)
+    setFocusBTrigger(prev => prev + 1)
+  }
+
   const [resetSignal, setResetSignal] = useState(0)
   const [history, setHistory] = useState([])
 
@@ -101,7 +108,7 @@ export default function App() {
             <div className="flex-1 w-full max-w-[480px]">
               <ResponseCard
                 title="Response A"
-                onScore={setResponseA}
+                onScore={handleScoreA}
                 resetSignal={resetSignal}
                 autoFocus
                 colorScheme="indigo"
@@ -114,6 +121,7 @@ export default function App() {
                 onScore={setResponseB}
                 resetSignal={resetSignal}
                 colorScheme="violet"
+                focusTrigger={focusBTrigger}
               />
             </div>
           </div>

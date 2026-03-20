@@ -8,7 +8,7 @@ const dimensions = [
   { id: "correctness", label: "Correct", weight: 20 }
 ]
 
-export default function ScoreInputs({ onComplete, resetSignal, autoFocus, colorScheme }) {
+export default function ScoreInputs({ onComplete, resetSignal, autoFocus, colorScheme, focusTrigger }) {
 
   const inputs = useRef([])
   const [values, setValues] = useState(["", "", "", "", ""])
@@ -78,6 +78,14 @@ export default function ScoreInputs({ onComplete, resetSignal, autoFocus, colorS
       }, 100)
     }
   }, [resetSignal, autoFocus])
+
+  useEffect(() => {
+    if (focusTrigger > 0) {
+      setTimeout(() => {
+         inputs.current[0]?.focus()
+      }, 100)
+    }
+  }, [focusTrigger])
 
   const focusRingColor = colorScheme === "indigo" 
     ? "focus-within:ring-indigo-500/30 focus-within:border-indigo-400"

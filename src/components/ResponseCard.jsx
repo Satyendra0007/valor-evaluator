@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import ScoreInputs from "./ScoreInputs"
 import { calculateScore, getRating } from "../utils/scoring"
 
-export default function ResponseCard({ title, onScore, resetSignal, autoFocus, colorScheme = "indigo" }) {
+export default function ResponseCard({ title, onScore, resetSignal, autoFocus, colorScheme = "indigo", focusTrigger }) {
 
   const [score, setScore] = useState(null)
   const [rating, setRating] = useState(null)
@@ -80,6 +80,7 @@ export default function ResponseCard({ title, onScore, resetSignal, autoFocus, c
           resetSignal={resetSignal}
           autoFocus={autoFocus}
           colorScheme={colorScheme}
+          focusTrigger={focusTrigger}
         />
       </div>
 
