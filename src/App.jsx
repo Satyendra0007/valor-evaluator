@@ -74,16 +74,7 @@ export default function App() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto flex flex-col items-center text-slate-900 transition-colors dark:text-slate-100">
-      <div className="text-center mb-8 w-full max-w-xl px-4 mt-4 relative">
-        <button
-          onClick={() => setTheme((prev) => (prev === "light" ? "dark" : "light"))}
-          className="absolute right-0 top-0 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:hover:border-slate-600 dark:hover:bg-slate-900"
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-        >
-          {theme === "light" ? <Moon size={14} strokeWidth={2.5} /> : <Sun size={14} strokeWidth={2.5} />}
-          {theme === "light" ? "Dark" : "Light"}
-        </button>
-
+      <div className="text-center mb-4 md:mb-8 w-full max-w-xl px-4 mt-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 flex items-center justify-center gap-3 text-slate-800 tracking-tight dark:text-slate-100">
           <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-2 sm:p-2.5 rounded-xl shadow-[0_4px_10px_rgb(99,102,241,0.3)] border border-indigo-400">
             <BarChart3 size={24} className="text-white" strokeWidth={2.5} />
@@ -93,6 +84,16 @@ export default function App() {
         <p className="text-sm text-slate-500 font-medium tracking-wide dark:text-slate-400">
           Response Evaluation Dashboard
         </p>
+        <div className="mt-4 flex justify-center">
+          <button
+            onClick={() => setTheme((prev) => (prev === "light" ? "dark" : "light"))}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:hover:border-slate-600 dark:hover:bg-slate-900"
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          >
+            {theme === "light" ? <Moon size={14} strokeWidth={2.5} /> : <Sun size={14} strokeWidth={2.5} />}
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
+        </div>
       </div>
 
       <div className="bg-indigo-50/50 backdrop-blur-md p-1.5 rounded-xl shadow-sm border border-indigo-100/50 mb-10 flex items-center w-max mx-auto dark:bg-slate-900/60 dark:border-slate-700/80">
